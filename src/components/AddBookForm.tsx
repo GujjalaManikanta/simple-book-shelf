@@ -49,15 +49,15 @@ const AddBookForm = ({ onAddBook }: AddBookFormProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="h-12 px-6 rounded-2xl shadow-lg shadow-primary/20 hover:shadow-accent/20 hover:-translate-y-0.5 transition-all bg-primary hover:bg-primary/90">
-          <Plus className="mr-2 h-5 w-5" />
-          <span className="font-bold">Add New Record</span>
+        <Button className="h-12 px-8 rounded-sm shadow-xl hover:shadow-accent/40 hover:-translate-y-0.5 transition-all bg-accent hover:bg-accent/90 text-accent-foreground border border-white/10 uppercase tracking-[0.2em] font-bold text-[10px]">
+          <Plus className="mr-2 h-4 w-4" />
+          Accession New Volume
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md glass border-primary/20 rounded-3xl overflow-hidden p-0">
-        <div className="bg-primary/5 p-6 border-b border-primary/10">
+      <DialogContent className="sm:max-w-md bg-card paper-texture border-accent/30 rounded-none overflow-hidden p-0 shadow-2xl">
+        <div className="bg-primary p-6 border-b border-accent/20 wood-panel">
           <DialogHeader>
-            <DialogTitle className="font-serif text-2xl">Register New Archive</DialogTitle>
+            <DialogTitle className="font-serif text-2xl text-primary-foreground italic">Catalog Accession</DialogTitle>
           </DialogHeader>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-5">

@@ -70,38 +70,38 @@ const BookTable = ({
   }
 
   return (
-    <div className="rounded-2xl border border-primary/10 bg-card/50 backdrop-blur-sm overflow-hidden shadow-xl animate-in">
+    <div className="rounded border border-accent/20 bg-card paper-texture overflow-hidden shadow-2xl animate-in">
       <Table>
         <TableHeader>
-          <TableRow className="bg-primary/5 hover:bg-primary/5 border-b border-primary/10">
+          <TableRow className="wood-panel hover:bg-primary border-b border-accent/20">
             <SortableHeader label="Title" field="title" activeField={sortField} direction={sortDirection} onSort={onSort} />
             <SortableHeader label="Author" field="author" activeField={sortField} direction={sortDirection} onSort={onSort} />
             <SortableHeader label="Genre" field="genre" activeField={sortField} direction={sortDirection} onSort={onSort} />
             <SortableHeader label="Copies" field="copies" activeField={sortField} direction={sortDirection} onSort={onSort} />
-            <TableHead className="text-center font-bold uppercase tracking-widest text-[10px]">Status</TableHead>
-            <TableHead className="text-right font-bold uppercase tracking-widest text-[10px]">Operations</TableHead>
+            <TableHead className="text-center font-bold uppercase tracking-widest text-[9px] text-primary-foreground/60">Status</TableHead>
+            <TableHead className="text-right font-bold uppercase tracking-widest text-[9px] text-primary-foreground/60">Operations</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {books.map((book) => (
             <TableRow
               key={book.id}
-              className={`transition-all duration-300 border-primary/5 hover:bg-primary/5 ${deletingId === book.id ? "opacity-50 grayscale" : ""}`}
+              className={`transition-all duration-300 border-primary/5 hover:bg-accent/5 ${deletingId === book.id ? "opacity-50 grayscale" : ""}`}
             >
-              <TableCell className="font-serif font-bold text-lg">{book.title}</TableCell>
-              <TableCell className="text-muted-foreground font-medium">{book.author}</TableCell>
+              <TableCell className="font-serif font-bold text-lg italic text-primary">{book.title}</TableCell>
+              <TableCell className="text-primary/70 font-medium">{book.author}</TableCell>
               <TableCell>
-                <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-tighter border-primary/20">
+                <div className="px-2 py-0.5 rounded border border-primary/10 bg-primary/5 inline-block text-[10px] uppercase font-bold tracking-tighter text-primary/60">
                   {book.genre}
-                </Badge>
+                </div>
               </TableCell>
               <TableCell className="text-center font-bold font-serif group">
                 <div className="flex items-center justify-center gap-2">
-                  <span className="bg-secondary/50 px-3 py-1 rounded-lg border border-primary/5">{book.copies}</span>
+                  <span className="bg-primary/5 px-3 py-1 rounded border border-primary/10">{book.copies}</span>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-all hover:text-accent hover:bg-accent/10"
+                    className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-all hover:text-accent hover:bg-accent/5"
                     onClick={() => {
                       const input = window.prompt(`Update total copies for "${book.title}":`, book.copies.toString());
                       if (input) {
@@ -115,19 +115,16 @@ const BookTable = ({
                 </div>
               </TableCell>
               <TableCell className="text-center">
-                <Badge
-                  className="px-3 py-1 rounded-full font-bold text-[10px] uppercase tracking-wider transition-all"
-                  variant={book.borrowed < book.copies ? "secondary" : "destructive"}
-                >
-                  {book.borrowed < book.copies ? "Available" : "Checked Out"}
-                </Badge>
+                <div className={`inline-block px-3 py-1 rounded border-2 transform -rotate-3 font-bold text-[9px] uppercase tracking-wider ${book.borrowed < book.copies ? "border-green-800/20 text-green-800/50" : "border-red-800/20 text-red-800/50"}`}>
+                  {book.borrowed < book.copies ? "Accepted" : "On Loan"}
+                </div>
               </TableCell>
               <TableCell className="text-right">
                 <div className="flex items-center justify-end gap-2">
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-8 rounded-lg border-primary/10 hover:bg-primary hover:text-primary-foreground transition-all"
+                    className="h-8 rounded-sm border-primary/20 hover:bg-primary hover:text-primary-foreground transition-all uppercase text-[9px] font-bold tracking-widest"
                     disabled={book.borrowed >= book.copies}
                     onClick={() => onBorrow(book.id)}
                   >
@@ -136,7 +133,7 @@ const BookTable = ({
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-8 rounded-lg border-primary/10 hover:bg-secondary transition-all"
+                    className="h-8 rounded-sm border-primary/20 hover:bg-secondary transition-all uppercase text-[9px] font-bold tracking-widest"
                     disabled={book.borrowed <= 0}
                     onClick={() => onReturn(book.id)}
                   >
@@ -145,7 +142,7 @@ const BookTable = ({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                    className="h-8 w-8 text-primary/40 hover:text-destructive hover:bg-destructive/5 transition-colors"
                     onClick={() => onDelete(book.id)}
                   >
                     <Trash2 className="h-4 w-4" />

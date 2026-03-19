@@ -6,67 +6,67 @@
 
 @layer base {
   :root {
-    /* Midnight Archive Light Palette */
-    --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
+    /* Classic Library Light Palette - Mahogany & Parchment */
+    --background: 35 30% 98%; /* Light Parchment Wash */
+    --foreground: 20 50% 10%; /* Dark Mahogany Ink */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card: 45 40% 96%; /* Parchment Paper */
+    --card-foreground: 20 50% 10%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover: 45 40% 96%;
+    --popover-foreground: 20 50% 10%;
 
-    --primary: 221 83% 53%; /* Deep Modern Blue */
-    --primary-foreground: 210 40% 98%;
+    --primary: 20 60% 15%; /* Deep Mahogany Wood */
+    --primary-foreground: 45 40% 96%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222 47% 11.2%;
+    --secondary: 35 30% 90%;
+    --secondary-foreground: 20 60% 15%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 35 20% 85%;
+    --muted-foreground: 20 30% 40%;
 
-    --accent: 45 93% 47%; /* Gold Accent */
-    --accent-foreground: 222 47% 11.2%;
+    --accent: 43 70% 40%; /* Brass/Aged Gold */
+    --accent-foreground: 35 30% 98%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 50% 30%;
+    --destructive-foreground: 35 30% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --border: 20 30% 85%;
+    --input: 20 30% 85%;
+    --ring: 43 70% 40%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
   }
 
   .dark {
-    /* Midnight Archive Dark Palette */
-    --background: 222 47% 4%;
-    --foreground: 213 31% 91%;
+    /* Classic Library Dark Palette - Aged Mahogany & Ink */
+    --background: 20 60% 5%; /* Darkest Mahogany */
+    --foreground: 45 40% 85%; /* Aged Paper Text */
 
-    --card: 222 47% 6%;
-    --card-foreground: 213 31% 91%;
+    --card: 20 60% 8%; /* Deep Wood */
+    --card-foreground: 45 40% 85%;
 
-    --popover: 222 47% 6%;
-    --popover-foreground: 213 31% 91%;
+    --popover: 20 60% 8%;
+    --popover-foreground: 45 40% 85%;
 
-    --primary: 217 91% 60%;
-    --primary-foreground: 222 47% 4%;
+    --primary: 43 70% 50%; /* Brass */
+    --primary-foreground: 20 60% 5%;
 
-    --secondary: 222 47% 12%;
-    --secondary-foreground: 213 31% 91%;
+    --secondary: 20 40% 15%;
+    --secondary-foreground: 45 40% 85%;
 
-    --muted: 222 47% 12%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 20 40% 15%;
+    --muted-foreground: 20 20% 60%;
 
-    --accent: 45 93% 47%; /* Gold */
-    --accent-foreground: 222 47% 4%;
+    --accent: 43 70% 50%; /* Bright Brass */
+    --accent-foreground: 20 60% 5%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 213 31% 91%;
+    --destructive: 0 60% 30%;
+    --destructive-foreground: 45 40% 85%;
 
-    --border: 222 47% 12%;
-    --input: 222 47% 12%;
-    --ring: 224.3 76.3% 48%;
+    --border: 20 40% 15%;
+    --input: 20 40% 15%;
+    --ring: 43 70% 50%;
   }
 }
 
@@ -75,30 +75,49 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-sans selection:bg-accent/30;
+    @apply bg-background text-foreground font-serif selection:bg-accent/30;
     font-feature-settings: "rlig" 1, "calt" 1;
+    background-image: radial-gradient(circle at 50% 50%, rgba(0,0,0,0.02) 0%, transparent 100%);
   }
 }
 
 @layer components {
   .glass {
-    @apply bg-background/80 backdrop-blur-md border border-white/10;
+    @apply bg-background/80 backdrop-blur-md border border-primary/10;
   }
   
   .book-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 2rem;
+    gap: 2.5rem;
+  }
+
+  .paper-texture {
+    background-image: url("https://www.transparenttextures.com/patterns/notebook.png");
+  }
+
+  .wood-panel {
+    background-color: hsl(var(--primary));
+    background-image: url("https://www.transparenttextures.com/patterns/wood-pattern.png");
   }
 }
 
 /* Custom Animations */
+@keyframes bookPull {
+  from { transform: perspective(1000px) rotateY(0deg); }
+  to { transform: perspective(1000px) rotateY(-5deg) translateZ(20px); }
+}
+
+.animate-book-pull:hover {
+  animation: bookPull 0.3s ease-out forwards;
+}
+
 @keyframes fadeInScale {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .animate-in {
-  animation: fadeInScale 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeInScale 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 

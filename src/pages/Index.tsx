@@ -27,7 +27,7 @@ const Index = () => {
   } = useLibrary();
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-[#1a120b] pb-20 selection:bg-accent/40">
       <LibraryHeader 
         totalBooks={totalBooks} 
         totalCopies={totalCopies} 
