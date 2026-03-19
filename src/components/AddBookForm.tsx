@@ -49,15 +49,15 @@ const AddBookForm = ({ onAddBook }: AddBookFormProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="h-12 px-8 rounded-sm shadow-xl hover:shadow-accent/40 hover:-translate-y-0.5 transition-all bg-accent hover:bg-accent/90 text-accent-foreground border border-white/10 uppercase tracking-[0.2em] font-bold text-[10px]">
-          <Plus className="mr-2 h-4 w-4" />
-          Accession New Volume
+        <Button className="h-12 px-8 rounded-none shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all bg-primary hover:bg-primary/95 text-primary-foreground academic-label">
+          <Plus className="mr-2.5 h-4 w-4" />
+          Accession Volume
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md bg-card paper-texture border-accent/30 rounded-none overflow-hidden p-0 shadow-2xl">
-        <div className="bg-primary p-6 border-b border-accent/20 wood-panel">
+      <DialogContent className="sm:max-w-md bg-card border-primary/20 rounded-none overflow-hidden p-0 shadow-2xl">
+        <div className="bg-primary p-7 border-b border-white/5 shadow-lg">
           <DialogHeader>
-            <DialogTitle className="font-serif text-2xl text-primary-foreground italic">Catalog Accession</DialogTitle>
+            <DialogTitle className="font-serif text-2xl text-primary-foreground font-bold tracking-tight">Catalog Accession</DialogTitle>
           </DialogHeader>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-5">

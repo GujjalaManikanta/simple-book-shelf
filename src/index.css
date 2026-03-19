@@ -6,67 +6,67 @@
 
 @layer base {
   :root {
-    /* Classic Library Light Palette - Mahogany & Parchment */
-    --background: 35 30% 98%; /* Light Parchment Wash */
-    --foreground: 20 50% 10%; /* Dark Mahogany Ink */
+    /* Academic Archive Palette - Premium Professionalism */
+    --background: 40 40% 98%; /* Ivory Paper */
+    --foreground: 20 45% 8%; /* Near Black Mahogany Ink */
 
-    --card: 45 40% 96%; /* Parchment Paper */
-    --card-foreground: 20 50% 10%;
+    --card: 40 40% 99%; /* Clean Ivory Card */
+    --card-foreground: 20 45% 8%;
 
-    --popover: 45 40% 96%;
-    --popover-foreground: 20 50% 10%;
+    --popover: 40 40% 99%;
+    --popover-foreground: 20 45% 8%;
 
-    --primary: 20 60% 15%; /* Deep Mahogany Wood */
-    --primary-foreground: 45 40% 96%;
+    --primary: 20 50% 12%; /* Deep Professional Mahogany */
+    --primary-foreground: 40 40% 98%;
 
-    --secondary: 35 30% 90%;
-    --secondary-foreground: 20 60% 15%;
+    --secondary: 40 30% 94%;
+    --secondary-foreground: 20 50% 12%;
 
-    --muted: 35 20% 85%;
-    --muted-foreground: 20 30% 40%;
+    --muted: 40 20% 90%;
+    --muted-foreground: 20 20% 40%;
 
-    --accent: 43 70% 40%; /* Brass/Aged Gold */
-    --accent-foreground: 35 30% 98%;
+    --accent: 38 65% 45%; /* Burnished Brass Accent */
+    --accent-foreground: 40 40% 99%;
 
-    --destructive: 0 50% 30%;
-    --destructive-foreground: 35 30% 98%;
+    --destructive: 0 40% 40%;
+    --destructive-foreground: 40 40% 99%;
 
-    --border: 20 30% 85%;
-    --input: 20 30% 85%;
-    --ring: 43 70% 40%;
+    --border: 20 20% 92%;
+    --input: 20 20% 92%;
+    --ring: 38 65% 45%;
 
-    --radius: 0.5rem;
+    --radius: 0.25rem; /* Shorter radius for a more professional, "archive" look */
   }
 
   .dark {
-    /* Classic Library Dark Palette - Aged Mahogany & Ink */
-    --background: 20 60% 5%; /* Darkest Mahogany */
-    --foreground: 45 40% 85%; /* Aged Paper Text */
+    /* Academic Archive Dark Palette */
+    --background: 20 50% 4%; /* Darkest Mahogany */
+    --foreground: 40 30% 88%;
 
-    --card: 20 60% 8%; /* Deep Wood */
-    --card-foreground: 45 40% 85%;
+    --card: 20 50% 6%;
+    --card-foreground: 40 30% 88%;
 
-    --popover: 20 60% 8%;
-    --popover-foreground: 45 40% 85%;
+    --popover: 20 50% 6%;
+    --popover-foreground: 40 30% 88%;
 
-    --primary: 43 70% 50%; /* Brass */
-    --primary-foreground: 20 60% 5%;
+    --primary: 38 65% 55%; /* Lighter Brass */
+    --primary-foreground: 20 50% 4%;
 
-    --secondary: 20 40% 15%;
-    --secondary-foreground: 45 40% 85%;
+    --secondary: 20 40% 12%;
+    --secondary-foreground: 40 30% 88%;
 
-    --muted: 20 40% 15%;
-    --muted-foreground: 20 20% 60%;
+    --muted: 20 40% 12%;
+    --muted-foreground: 20 15% 55%;
 
-    --accent: 43 70% 50%; /* Bright Brass */
-    --accent-foreground: 20 60% 5%;
+    --accent: 38 65% 55%;
+    --accent-foreground: 20 50% 4%;
 
-    --destructive: 0 60% 30%;
-    --destructive-foreground: 45 40% 85%;
+    --destructive: 0 50% 35%;
+    --destructive-foreground: 40 30% 88%;
 
-    --border: 20 40% 15%;
-    --input: 20 40% 15%;
-    --ring: 43 70% 50%;
+    --border: 20 30% 12%;
+    --input: 20 30% 12%;
+    --ring: 38 65% 55%;
   }
 }
 
@@ -75,49 +75,54 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-serif selection:bg-accent/30;
-    font-feature-settings: "rlig" 1, "calt" 1;
-    background-image: radial-gradient(circle at 50% 50%, rgba(0,0,0,0.02) 0%, transparent 100%);
+    @apply bg-background text-foreground font-serif selection:bg-accent/20;
+    font-feature-settings: "ss01" 1, "ss02" 1, "cv01" 1, "cv11" 1;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.011em;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tighter font-bold;
+    letter-spacing: -0.02em;
   }
 }
 
 @layer components {
-  .glass {
-    @apply bg-background/80 backdrop-blur-md border border-primary/10;
+  .archive-card {
+    @apply bg-card border border-primary/5 shadow-sm transition-all duration-300;
   }
   
+  .archive-card:hover {
+    @apply shadow-md border-primary/20 ring-1 ring-primary/5 ring-inset;
+  }
+
   .book-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 2.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 3rem;
   }
 
-  .paper-texture {
-    background-image: url("https://www.transparenttextures.com/patterns/notebook.png");
+  .paper-grain {
+    background-image: url("https://www.transparenttextures.com/patterns/clean-gray-paper.png");
   }
 
-  .wood-panel {
-    background-color: hsl(var(--primary));
-    background-image: url("https://www.transparenttextures.com/patterns/wood-pattern.png");
+  .wood-trim {
+    @apply border-t-4 border-primary;
   }
 }
 
-/* Custom Animations */
-@keyframes bookPull {
-  from { transform: perspective(1000px) rotateY(0deg); }
-  to { transform: perspective(1000px) rotateY(-5deg) translateZ(20px); }
-}
-
-.animate-book-pull:hover {
-  animation: bookPull 0.3s ease-out forwards;
-}
-
-@keyframes fadeInScale {
-  from { opacity: 0; transform: translateY(10px); }
+/* Precision Animations */
+@keyframes archiveEnter {
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.animate-in {
-  animation: fadeInScale 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.animate-archive-in {
+  animation: archiveEnter 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+.academic-label {
+  @apply text-[10px] uppercase font-bold tracking-[0.25em] text-muted-foreground/80 leading-none;
+}
+
 

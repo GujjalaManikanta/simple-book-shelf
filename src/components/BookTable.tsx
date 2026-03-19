@@ -70,40 +70,41 @@ const BookTable = ({
   }
 
   return (
-    <div className="rounded border border-accent/20 bg-card paper-texture overflow-hidden shadow-2xl animate-in">
+    <div className="rounded-none border border-primary/10 bg-card paper-grain overflow-hidden shadow-sm animate-archive-in">
       <Table>
         <TableHeader>
-          <TableRow className="wood-panel hover:bg-primary border-b border-accent/20">
-            <SortableHeader label="Title" field="title" activeField={sortField} direction={sortDirection} onSort={onSort} />
+          <TableRow className="bg-primary hover:bg-primary border-b border-primary/20">
+            <SortableHeader label="Collection Title" field="title" activeField={sortField} direction={sortDirection} onSort={onSort} />
             <SortableHeader label="Author" field="author" activeField={sortField} direction={sortDirection} onSort={onSort} />
             <SortableHeader label="Genre" field="genre" activeField={sortField} direction={sortDirection} onSort={onSort} />
-            <SortableHeader label="Copies" field="copies" activeField={sortField} direction={sortDirection} onSort={onSort} />
-            <TableHead className="text-center font-bold uppercase tracking-widest text-[9px] text-primary-foreground/60">Status</TableHead>
-            <TableHead className="text-right font-bold uppercase tracking-widest text-[9px] text-primary-foreground/60">Operations</TableHead>
+            <SortableHeader label="Inventory" field="copies" activeField={sortField} direction={sortDirection} onSort={onSort} />
+            <TableHead className="text-center academic-label text-primary-foreground/60 py-4">Status</TableHead>
+            <TableHead className="text-right academic-label text-primary-foreground/60 py-4">Contextual Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {books.map((book) => (
+          {books.map((book, i) => (
             <TableRow
               key={book.id}
-              className={`transition-all duration-300 border-primary/5 hover:bg-accent/5 ${deletingId === book.id ? "opacity-50 grayscale" : ""}`}
+              className={`transition-all duration-300 border-primary/5 hover:bg-primary/5 ${deletingId === book.id ? "opacity-30" : ""}`}
+              style={{ animationDelay: `${i * 0.05}s` }}
             >
-              <TableCell className="font-serif font-bold text-lg italic text-primary">{book.title}</TableCell>
-              <TableCell className="text-primary/70 font-medium">{book.author}</TableCell>
+              <TableCell className="font-serif font-bold text-lg text-primary py-6">{book.title}</TableCell>
+              <TableCell className="text-primary/70 font-medium text-sm">{book.author}</TableCell>
               <TableCell>
-                <div className="px-2 py-0.5 rounded border border-primary/10 bg-primary/5 inline-block text-[10px] uppercase font-bold tracking-tighter text-primary/60">
+                <div className="academic-label border border-primary/10 px-2 py-1 inline-block">
                   {book.genre}
                 </div>
               </TableCell>
               <TableCell className="text-center font-bold font-serif group">
-                <div className="flex items-center justify-center gap-2">
-                  <span className="bg-primary/5 px-3 py-1 rounded border border-primary/10">{book.copies}</span>
+                <div className="flex items-center justify-center gap-3">
+                  <span className="text-lg">{book.copies}</span>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-all hover:text-accent hover:bg-accent/5"
+                    className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-all hover:text-accent hover:bg-transparent"
                     onClick={() => {
-                      const input = window.prompt(`Update total copies for "${book.title}":`, book.copies.toString());
+                      const input = window.prompt(`Update inventory for "${book.title}":`, book.copies.toString());
                       if (input) {
                         const val = parseInt(input, 10);
                         if (!isNaN(val)) onUpdateCopies(book.id, val);
@@ -115,16 +116,17 @@ const BookTable = ({
                 </div>
               </TableCell>
               <TableCell className="text-center">
-                <div className={`inline-block px-3 py-1 rounded border-2 transform -rotate-3 font-bold text-[9px] uppercase tracking-wider ${book.borrowed < book.copies ? "border-green-800/20 text-green-800/50" : "border-red-800/20 text-red-800/50"}`}>
-                  {book.borrowed < book.copies ? "Accepted" : "On Loan"}
+                <div className={`inline-flex items-center gap-2 academic-label px-3 py-1.5 border ${book.borrowed < book.copies ? "border-green-600/20 text-green-700" : "border-accent/20 text-accent"}`}>
+                  <div className={`h-1 w-1 rounded-full ${book.borrowed < book.copies ? "bg-green-600" : "bg-accent"}`} />
+                  {book.borrowed < book.copies ? "Available" : "Checked Out"}
                 </div>
               </TableCell>
               <TableCell className="text-right">
-                <div className="flex items-center justify-end gap-2">
+                <div className="flex items-center justify-end gap-3">
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-8 rounded-sm border-primary/20 hover:bg-primary hover:text-primary-foreground transition-all uppercase text-[9px] font-bold tracking-widest"
+                    className="h-9 rounded-none border-primary/10 hover:bg-primary hover:text-primary-foreground transition-all academic-label px-4"
                     disabled={book.borrowed >= book.copies}
                     onClick={() => onBorrow(book.id)}
                   >
@@ -133,7 +135,7 @@ const BookTable = ({
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-8 rounded-sm border-primary/20 hover:bg-secondary transition-all uppercase text-[9px] font-bold tracking-widest"
+                    className="h-9 rounded-none border-primary/10 hover:bg-secondary transition-all academic-label px-4"
                     disabled={book.borrowed <= 0}
                     onClick={() => onReturn(book.id)}
                   >
@@ -142,7 +144,7 @@ const BookTable = ({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-primary/40 hover:text-destructive hover:bg-destructive/5 transition-colors"
+                    className="h-9 w-9 text-primary/30 hover:text-destructive hover:bg-transparent transition-colors"
                     onClick={() => onDelete(book.id)}
                   >
                     <Trash2 className="h-4 w-4" />
