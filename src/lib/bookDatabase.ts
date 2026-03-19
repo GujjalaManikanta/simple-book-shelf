@@ -1,55 +1,80 @@
 import { Book } from "./types";
+import { supabase } from "./supabase";
 
-const STORAGE_KEY = "library_books";
-
-const defaultBooks: Book[] = [
-  { id: "1", title: "To Kill a Mockingbird", author: "Harper Lee", genre: "Fiction", available: true },
-  { id: "2", title: "1984", author: "George Orwell", genre: "Dystopian", available: false },
-  { id: "3", title: "The Great Gatsby", author: "F. Scott Fitzgerald", genre: "Classic", available: true },
-  { id: "4", title: "Pride and Prejudice", author: "Jane Austen", genre: "Romance", available: true },
-  { id: "5", title: "The Catcher in the Rye", author: "J.D. Salinger", genre: "Fiction", available: false },
-];
-
-function loadBooks(): Book[] {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) return JSON.parse(stored);
-  } catch {
-    // fall through to defaults
+export async function getAllBooks(): Promise<Book[]> {
+  const { data, error } = await supabase.from('books').select('*').order('title');
+  if (error) {
+    console.error("Error fetching books:", error);
+    return [];
   }
-  saveBooks(defaultBooks);
-  return defaultBooks;
+  return data as Book[];
 }
 
-function saveBooks(books: Book[]): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(books));
+export async function addBook(book: Omit<Book, "id">): Promise<Book | null> {
+  const { data, error } = await supabase.from('books').insert([book]).select().single();
+  if (error) {
+    console.error("Error adding book:", error);
+    return null;
+  }
+  return data as Book;
 }
 
-export function getAllBooks(): Book[] {
-  return loadBooks();
-}
-
-export function addBook(book: Omit<Book, "id">): Book {
-  const books = loadBooks();
-  const newBook: Book = { ...book, id: crypto.randomUUID() };
-  books.push(newBook);
-  saveBooks(books);
-  return newBook;
-}
-
-export function deleteBook(id: string): boolean {
-  const books = loadBooks();
-  const filtered = books.filter((b) => b.id !== id);
-  if (filtered.length === books.length) return false;
-  saveBooks(filtered);
+export async function deleteBook(id: string): Promise<boolean> {
+  const { error } = await supabase.from('books').delete().eq('id', id);
+  if (error) {
+    console.error("Error deleting book:", error);
+    return false;
+  }
   return true;
 }
 
-export function toggleAvailability(id: string): Book | null {
-  const books = loadBooks();
-  const book = books.find((b) => b.id === id);
-  if (!book) return null;
-  book.available = !book.available;
-  saveBooks(books);
-  return book;
+export async function borrowBook(id: string): Promise<Book | null> {
+  const { data: book, error: fetchError } = await supabase.from('books').select('*').eq('id', id).single();
+  if (fetchError || !book) return null;
+  
+  if (book.borrowed >= book.copies) return null;
+  
+  const { data: updatedBook, error: updateError } = await supabase
+    .from('books')
+    .update({ borrowed: book.borrowed + 1 })
+    .eq('id', id)
+    .select()
+    .single();
+    
+  if (updateError) return null;
+  return updatedBook as Book;
+}
+
+export async function returnBook(id: string): Promise<Book | null> {
+  const { data: book, error: fetchError } = await supabase.from('books').select('*').eq('id', id).single();
+  if (fetchError || !book) return null;
+  
+  if (book.borrowed <= 0) return null;
+  
+  const { data: updatedBook, error: updateError } = await supabase
+    .from('books')
+    .update({ borrowed: book.borrowed - 1 })
+    .eq('id', id)
+    .select()
+    .single();
+    
+  if (updateError) return null;
+  return updatedBook as Book;
+}
+
+export async function updateCopies(id: string, newCopies: number): Promise<Book | null> {
+  const { data: book, error: fetchError } = await supabase.from('books').select('*').eq('id', id).single();
+  if (fetchError || !book) return null;
+  
+  if (newCopies < 1 || newCopies < book.borrowed) return null;
+  
+  const { data: updatedBook, error: updateError } = await supabase
+    .from('books')
+    .update({ copies: newCopies })
+    .eq('id', id)
+    .select()
+    .single();
+    
+  if (updateError) return null;
+  return updatedBook as Book;
 }

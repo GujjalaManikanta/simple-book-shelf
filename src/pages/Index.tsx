@@ -8,6 +8,8 @@ const Index = () => {
   const {
     books,
     totalBooks,
+    totalCopies,
+    isLoading,
     query,
     setQuery,
     sortField,
@@ -15,13 +17,15 @@ const Index = () => {
     handleSort,
     handleAddBook,
     handleDeleteBook,
-    handleToggleAvailability,
+    handleBorrowBook,
+    handleReturnBook,
+    handleUpdateCopies,
     deletingId,
   } = useLibrary();
 
   return (
     <div className="min-h-screen bg-background">
-      <LibraryHeader totalBooks={totalBooks} />
+      <LibraryHeader totalBooks={totalBooks} totalCopies={totalCopies} />
 
       <main className="container mx-auto px-6 py-6 space-y-6">
         {/* Action Row */}
@@ -31,15 +35,21 @@ const Index = () => {
         </div>
 
         {/* Book Table */}
-        <BookTable
-          books={books}
-          sortField={sortField}
-          sortDirection={sortDirection}
-          deletingId={deletingId}
-          onSort={handleSort}
-          onDelete={handleDeleteBook}
-          onToggleAvailability={handleToggleAvailability}
-        />
+        {isLoading ? (
+          <div className="flex justify-center p-12 text-muted-foreground animate-pulse">Loading your library from the cloud...</div>
+        ) : (
+          <BookTable
+            books={books}
+            sortField={sortField}
+            sortDirection={sortDirection}
+            deletingId={deletingId}
+            onSort={handleSort}
+            onDelete={handleDeleteBook}
+            onBorrow={handleBorrowBook}
+            onReturn={handleReturnBook}
+            onUpdateCopies={handleUpdateCopies}
+          />
+        )}
       </main>
     </div>
   );

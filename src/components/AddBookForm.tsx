@@ -14,7 +14,7 @@ import {
 import { ValidationError } from "@/lib/validation";
 
 interface AddBookFormProps {
-  onAddBook: (title: string, author: string, genre: string) => ValidationError[];
+  onAddBook: (title: string, author: string, genre: string, copies: number) => Promise<ValidationError[]>;
 }
 
 const AddBookForm = ({ onAddBook }: AddBookFormProps) => {
@@ -22,17 +22,19 @@ const AddBookForm = ({ onAddBook }: AddBookFormProps) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [genre, setGenre] = useState("");
+  const [copies, setCopies] = useState(1);
   const [errors, setErrors] = useState<ValidationError[]>([]);
 
   const getError = (field: string) => errors.find((e) => e.field === field)?.message;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const result = onAddBook(title, author, genre);
+    const result = await onAddBook(title, author, genre, copies);
     if (result.length === 0) {
       setTitle("");
       setAuthor("");
       setGenre("");
+      setCopies(1);
       setErrors([]);
       setOpen(false);
     } else {
@@ -67,6 +69,11 @@ const AddBookForm = ({ onAddBook }: AddBookFormProps) => {
             <Label htmlFor="genre">Genre</Label>
             <Input id="genre" value={genre} onChange={(e) => setGenre(e.target.value)} placeholder="e.g. Classic" />
             {getError("genre") && <p className="text-sm text-destructive">{getError("genre")}</p>}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="copies">Copies</Label>
+            <Input id="copies" type="number" min="1" value={copies} onChange={(e) => setCopies(parseInt(e.target.value) || 1)} />
+            {getError("copies") && <p className="text-sm text-destructive">{getError("copies")}</p>}
           </div>
           <DialogFooter>
             <Button type="submit" className="w-full sm:w-auto">Add Book</Button>

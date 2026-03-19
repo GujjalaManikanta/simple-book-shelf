@@ -3,8 +3,9 @@ export interface Book {
   title: string;
   author: string;
   genre: string;
-  available: boolean;
+  copies: number;
+  borrowed: number;
 }
 
-export type SortField = "title" | "author" | "genre";
+export type SortField = "title" | "author" | "genre" | "copies";
 export type SortDirection = "asc" | "desc";

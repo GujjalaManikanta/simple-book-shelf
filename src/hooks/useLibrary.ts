@@ -1,15 +1,27 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Book, SortField, SortDirection } from "@/lib/types";
-import { getAllBooks, addBook, deleteBook, toggleAvailability } from "@/lib/bookDatabase";
+import { getAllBooks, addBook, deleteBook, borrowBook, returnBook, updateCopies } from "@/lib/bookDatabase";
 import { searchBooks, sortBooks } from "@/lib/searchModule";
 import { validateBookInput, ValidationError } from "@/lib/validation";
 
 export function useLibrary() {
-  const [books, setBooks] = useState<Book[]>(getAllBooks);
+  const [books, setBooks] = useState<Book[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [sortField, setSortField] = useState<SortField>("title");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const fetchBooks = useCallback(async () => {
+    setIsLoading(true);
+    const data = await getAllBooks();
+    setBooks(data);
+    setIsLoading(false);
+  }, []);
+
+  useEffect(() => {
+    fetchBooks();
+  }, [fetchBooks]);
 
   const filteredBooks = useMemo(() => {
     const searched = searchBooks(books, query);
@@ -17,28 +29,47 @@ export function useLibrary() {
   }, [books, query, sortField, sortDirection]);
 
   const handleAddBook = useCallback(
-    (title: string, author: string, genre: string): ValidationError[] => {
-      const errors = validateBookInput(title, author, genre);
+    async (title: string, author: string, genre: string, copies: number): Promise<ValidationError[]> => {
+      const errors = validateBookInput(title, author, genre, copies);
       if (errors.length > 0) return errors;
-      addBook({ title: title.trim(), author: author.trim(), genre: genre.trim(), available: true });
-      setBooks(getAllBooks());
+      
+      const newBook = await addBook({ title: title.trim(), author: author.trim(), genre: genre.trim(), borrowed: 0, copies });
+      if (newBook) {
+        setBooks(prev => [...prev, newBook]);
+      }
       return [];
     },
     []
   );
 
-  const handleDeleteBook = useCallback((id: string) => {
+  const handleDeleteBook = useCallback(async (id: string) => {
     setDeletingId(id);
-    setTimeout(() => {
-      deleteBook(id);
-      setBooks(getAllBooks());
-      setDeletingId(null);
-    }, 200);
+    const success = await deleteBook(id);
+    if (success) {
+      setBooks(prev => prev.filter(b => b.id !== id));
+    }
+    setDeletingId(null);
   }, []);
 
-  const handleToggleAvailability = useCallback((id: string) => {
-    toggleAvailability(id);
-    setBooks(getAllBooks());
+  const handleBorrowBook = useCallback(async (id: string) => {
+    const updated = await borrowBook(id);
+    if (updated) {
+      setBooks(prev => prev.map(b => b.id === id ? updated : b));
+    }
+  }, []);
+
+  const handleReturnBook = useCallback(async (id: string) => {
+    const updated = await returnBook(id);
+    if (updated) {
+      setBooks(prev => prev.map(b => b.id === id ? updated : b));
+    }
+  }, []);
+
+  const handleUpdateCopies = useCallback(async (id: string, newCopies: number) => {
+    const updated = await updateCopies(id, newCopies);
+    if (updated) {
+      setBooks(prev => prev.map(b => b.id === id ? updated : b));
+    }
   }, []);
 
   const handleSort = useCallback(
@@ -53,9 +84,13 @@ export function useLibrary() {
     [sortField]
   );
 
+  const totalCopies = useMemo(() => books.reduce((sum, book) => sum + book.copies, 0), [books]);
+
   return {
     books: filteredBooks,
     totalBooks: books.length,
+    totalCopies,
+    isLoading,
     query,
     setQuery,
     sortField,
@@ -63,7 +98,9 @@ export function useLibrary() {
     handleSort,
     handleAddBook,
     handleDeleteBook,
-    handleToggleAvailability,
+    handleBorrowBook,
+    handleReturnBook,
+    handleUpdateCopies,
     deletingId,
   };
 }

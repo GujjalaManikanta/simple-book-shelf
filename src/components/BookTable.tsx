@@ -1,4 +1,4 @@
-import { ArrowUpDown, Trash2 } from "lucide-react";
+import { ArrowUpDown, Trash2, Edit2 } from "lucide-react";
 import { Book, SortField, SortDirection } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,9 @@ interface BookTableProps {
   deletingId: string | null;
   onSort: (field: SortField) => void;
   onDelete: (id: string) => void;
-  onToggleAvailability: (id: string) => void;
+  onBorrow: (id: string) => void;
+  onReturn: (id: string) => void;
+  onUpdateCopies: (id: string, newCopies: number) => void;
 }
 
 const SortableHeader = ({
@@ -55,7 +57,9 @@ const BookTable = ({
   deletingId,
   onSort,
   onDelete,
-  onToggleAvailability,
+  onBorrow,
+  onReturn,
+  onUpdateCopies,
 }: BookTableProps) => {
   if (books.length === 0) {
     return (
@@ -74,6 +78,7 @@ const BookTable = ({
             <SortableHeader label="Title" field="title" activeField={sortField} direction={sortDirection} onSort={onSort} />
             <SortableHeader label="Author" field="author" activeField={sortField} direction={sortDirection} onSort={onSort} />
             <SortableHeader label="Genre" field="genre" activeField={sortField} direction={sortDirection} onSort={onSort} />
+            <SortableHeader label="Copies" field="copies" activeField={sortField} direction={sortDirection} onSort={onSort} />
             <TableHead className="text-center">Status</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
@@ -87,17 +92,59 @@ const BookTable = ({
               <TableCell className="font-serif font-semibold">{book.title}</TableCell>
               <TableCell className="text-muted-foreground">{book.author}</TableCell>
               <TableCell className="text-muted-foreground">{book.genre}</TableCell>
+              <TableCell className="text-muted-foreground text-center font-medium group relative">
+                <div className="flex items-center justify-center gap-2">
+                  <span>{book.copies}</span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() => {
+                      const input = window.prompt(`Update total copies for "${book.title}":`, book.copies.toString());
+                      if (input !== null) {
+                        const val = parseInt(input, 10);
+                        if (!isNaN(val)) {
+                          if (val < book.borrowed) {
+                            alert(`Cannot reduce total copies below checked out copies (${book.borrowed}).`);
+                          } else if (val < 1) {
+                            alert("Must have at least 1 copy.");
+                          } else {
+                            onUpdateCopies(book.id, val);
+                          }
+                        }
+                      }
+                    }}
+                  >
+                    <Edit2 className="h-3 w-3" />
+                  </Button>
+                </div>
+              </TableCell>
               <TableCell className="text-center">
                 <Badge
-                  className="cursor-pointer select-none transition-colors duration-150"
-                  variant={book.available ? "default" : "destructive"}
-                  style={book.available ? { backgroundColor: "hsl(var(--success))", color: "hsl(var(--success-foreground))" } : undefined}
-                  onClick={() => onToggleAvailability(book.id)}
+                  className="select-none transition-colors duration-150"
+                  variant={book.borrowed < book.copies ? "default" : "destructive"}
+                  style={book.borrowed < book.copies ? { backgroundColor: "hsl(var(--success))", color: "hsl(var(--success-foreground))" } : undefined}
                 >
-                  {book.available ? "Available" : "Checked Out"}
+                  {book.borrowed < book.copies ? `Available (${book.copies - book.borrowed}/${book.copies})` : "Checked Out"}
                 </Badge>
               </TableCell>
-              <TableCell className="text-right">
+              <TableCell className="text-right flex items-center justify-end gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={book.borrowed >= book.copies}
+                  onClick={() => onBorrow(book.id)}
+                >
+                  Borrow
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={book.borrowed <= 0}
+                  onClick={() => onReturn(book.id)}
+                >
+                  Return
+                </Button>
                 <Button
                   variant="ghost"
                   size="sm"
